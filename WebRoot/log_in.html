@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="styles/login.css"/>
+ <script type="text/javascript" 
+    	src="scripts/jquery.min.js">
+ </script>
+  <script type="text/javascript" 
+    	src="scripts/base64.js">
+ </script>
+ <script type="text/javascript" 
+    	src="scripts/cookie_util.js">
+ </script>
+ <script type="text/javascript" 
+ 		src="scripts/login.js">
+</script>
+<script type="text/javascript">
+$(function(){
+  //注册按钮单击处理
+  $("#regist_button").click(function(){
+  	//隐藏所有提示信息
+  	$("#warning_1").hide();
+  	$("#warning_2").hide();
+  	$("#warning_3").hide();
+  	$("#warning_4").hide();
+  	//获取要提交的数据
+  	var name = $("#regist_username").val().trim();
+  	var nick = $("#nickname").val().trim();
+  	var password = $("#regist_password").val().trim();
+  	var repassword = $("#final_password").val().trim();
+  	//检测数据格式
+  	var flag = true;
+  	if(name == ""){
+  		$("#warning_1 span").html("用户名为空");
+  		$("#warning_1").show();
+  		flag = false;
+  	}
+  	if(nick == ""){
+  		$("#warning_4 span").html("昵称为空");
+  		$("#warning_4").show();
+  		flag = false;
+  	}
+  	if(password == ""){
+  	  	$("#warning_2 span").html("密码为空");
+  		$("#warning_2").show();
+  		flag = false;
+  	}
+  	if(repassword == ""){
+  	  	$("#warning_3 span").html("确认密码为空");
+  		$("#warning_3").show();
+  		flag = false;
+  	}
+  	//发送ajax请求
+  if(flag){	
+  	$.ajax({
+  		url:"http://localhost:8080/myffms/user/regist.do",
+  		type:"post",
+  		data:{"cn_user_name":name,
+  			"cn_user_password":password,
+  			"cn_user_desc":nick},
+  		dataType:"json",
+  		success:function(result){
+  			if(result.status==0){//成功
+  				alert(result.msg);//提示成功
+  				$("#back").click();//触发返回按钮单击操作
+  			}else if(result.status==1){//用户名被占用
+  				$("#warning_1 span").html(result.msg);
+  				$("#warning_1").show();
+  			}
+  		},
+  		error:function(){
+  			alert("注册异常");
+  		}
+  	});
+  }
+  });
+});
+</script>
+
+</head>
+	<body>
+		<div class="global">
+			<div class="log log_in" tabindex='-1' id='dl'>
+				<dl>
+					<dt>
+						<div class='header'>
+							<h3>登&nbsp;录</h3>
+						</div>
+					</dt>
+					<dt></dt>
+					<dt>
+						<div class='letter'>
+							用户名:&nbsp;<input type="text" name="" id="name" tabindex='1'/>
+							<span id="name_msg"></span>
+						</div>
+					</dt>
+					<dt>
+						<div class='letter'>
+							密&nbsp;&nbsp;&nbsp;码:&nbsp;<input type="password" name="" id="password" tabindex='2'/>
+							<span id="password_msg"></span>
+						</div>
+					</dt>
+					<dt>
+						<div>
+							<input type="button" name="" id="login" value='&nbsp登&nbsp录&nbsp' tabindex='3'/>
+							<input type="button" name="" id="sig_in" value='&nbsp注&nbsp册&nbsp' tabindex='4'/>
+						</div>
+					</dt>
+				</dl>
+			</div>
+			<div class="sig sig_out" tabindex='-1' id='zc' style='visibility:hidden;'>
+				<dl>
+					<dt>
+						<div class='header'>
+							<h3>注&nbsp;册</h3>
+						</div>
+					</dt>
+					<dt></dt>
+					<dt>
+						<div class='letter'>
+							用户名:&nbsp;<input type="text" name="" id="regist_username" tabindex='5'/>
+							<div class='warning' id='warning_1'><span>该用户名不可用</span></div>
+						</div>
+					</dt>
+					<dt>
+						<div class='letter'>
+							昵&nbsp;&nbsp;&nbsp;称:&nbsp;<input type="text" name="" id="nickname" tabindex='6'/>
+							<div class='warning' id='warning_4'><span></span></div>
+						</div>
+					</dt>
+					<dt>
+						<div class='letter'>
+							密&nbsp;&nbsp;&nbsp;码:&nbsp;<input type="password" name="" id="regist_password" tabindex='7'/>
+							<div class='warning' id='warning_2'><span>密码长度过短</span></div>
+						</div>
+					</dt>
+					<dt>
+						<div class='password'>
+							&nbsp;&nbsp;&nbsp;确认密码:&nbsp;<input type="password" name="" id="final_password" tabindex='8'/>
+							<div class='warning' id='warning_3'><span>密码输入不一致</span></div>
+						</div>
+					</dt>
+					<dt>
+						<div>
+							<input type="button" name="" id="regist_button" value='&nbsp注&nbsp册&nbsp' tabindex='9'/>
+							<input type="button" name="" id="back" value='&nbsp返&nbsp回&nbsp' tabindex='10'/>
+							<script type="text/javascript">
+							function get(e){
+								return document.getElementById(e);
+							}
+							get('sig_in').onclick=function(){
+								get('dl').className='log log_out';
+								get('zc').className='sig sig_in';
+							}
+							get('back').onclick=function(){
+								get('zc').className='sig sig_out';
+								get('dl').className='log log_in';
+							}
+							window.onload=function(){
+								var t =setTimeout("get('zc').style.visibility='visible'",800);
+							}
+							</script>
+						</div>
+					</dt>
+				</dl>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta name="renderer" content="webkit">
+	<title></title>
+	<link rel="stylesheet" href="css/pintuer.css">
+	<link rel="stylesheet" href="css/admin.css">
+    <script type="text/javascript" src="echarts/dist/echarts.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery.min.js"></script>
+</head> 
+<body>
+	<div class="panel-head"><strong class="icon-reorder"> 收支对比</strong> <a href="" style="float:right; display:none;"></a></div>
+    <div class="padding border-bottom">
+      <ul class="search" style="padding-left:0px;"> 
+        <li><a href="javascript:void(0)" class="button border-main icon-search" onclick="bytime()" > 按时间查询收支盈余</a>
+        <input type="date" id="starttime" class="starttime" display:inline-block" />
+        <input type="date" id="endtime" class="endtime" display:inline-block" /></li>
+        <li><a href="javascript:void(0)" class="button border-main icon-search"  > 该时间段收入总金额</a>
+        <input type="text" id="totalbytimeincome" class="input" style="width:250px; line-height:17px;display:inline-block" />元</li>	
+        <li><a href="javascript:void(0)" class="button border-main icon-search"  > 该时间段支出总金额</a>	
+        <input type="text" id="totalbytimeoutcome" class="input" style="width:250px; line-height:17px;display:inline-block" />元</li> 
+        <li><a href="javascript:void(0)" class="button border-main icon-search"  > 显示差值</a>	
+        <input type="text" id="totaltime" class="input" style="width:250px; line-height:17px;display:inline-block" />元</li>  
+      </ul>
+    </div>
+	<div class="panel-head"><strong class="icon-reorder"> 收支对比图</strong> <a href="" style="float:right; display:none;"></a></div>
+    <div class="padding border-bottom">
+      <ul class="search" style="padding-left:0px;">  
+        <li><a href="javascript:void(0)" class="button border-main icon-search"  > 收入总金额</a>
+        <input type="text" id="totalincome" class="input" style="width:250px; line-height:17px;display:inline-block" />元</li>	
+        <li><a href="javascript:void(0)" class="button border-main icon-search"  > 支出总金额</a>
+        <input type="text" id="totalbytimeoutcome" class="input" style="width:250px; line-height:17px;display:inline-block" />元</li>
+        <li><a href="javascript:void(0)" class="button border-main icon-search" onclick="getChart()" id="click"> 显示图形 </a></li>
+        
+      </ul>
+    </div>
+	<div class="panel-head"><strong class="icon-reorder"> 图形对比 </strong> <a href="" style="float:right; display:none;"></a></div>
+    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+    <div id="main" style="width: 1000px;height:600px;"></div>  
+    <script type="text/javascript">
+       	var income;
+       	var outcome;
+       	function sumincome(){
+			// 发送ajax请求
+			$.ajax({
+				url : "http://localhost:8080/myffms/iocome/findincome.do",
+				type : "post",
+				data : {},
+				dataType : "json",
+				success : function(result) {
+					if (result.status == 0) {
+						income = result.data;
+						$("#totalincome").val(income);
+						return;
+					}
+				},
+				error : function() {
+					alert("合计错误");
+				}
+			});
+			return false;// 阻止冒泡
+		};
+		
+		function sumoutcome(){
+			// 发送ajax请求
+			$.ajax({
+				url : "http://localhost:8080/myffms/iocome/findoutcome.do",
+				type : "post",
+				data : {},
+				dataType : "json",
+				success : function(result) {
+					if (result.status == 0) {
+						outcome = result.data;
+						//alert(s);
+						$("#totaloutcome").val(outcome);
+						return;
+					}
+				},
+				error : function() {
+					alert("合计错误");
+				}
+			});
+			return false;// 阻止冒泡
+		};
+       function click(){
+       		alert(income);
+       };
+       
+       
+
+        // 指定图表的配置项和数据
+    
+    function getChart(){
+     // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+    	sumincome();
+    	sumoutcome();
+    	var option = {
+			title : {
+				text : '家庭财务收支对比',
+				subtext : '饼图',
+				x : 'center'
+			},
+			tooltip : {
+				trigger : 'item',
+				formatter : "{a} <br/>{b} : {c} ({d}%)"
+			},
+			legend : {
+				orient : 'vertical',
+				left : 'left',
+				data : [ '收入', '支出' ]
+			},
+			series : [ {
+				name : '名称',
+				type : 'pie',
+				radius : '55%',
+				center : [ '50%', '60%' ],
+				data : [ {
+					value : income,
+					name : '收入'
+				}, {
+					value : outcome,
+					name : '支出'
+				}],
+				itemStyle : {
+					emphasis : {
+						shadowBlur : 10,
+						shadowOffsetX : 0,
+						shadowColor : 'rgba(0, 0, 0, 0.5)'
+					}
+				}
+			} ]
+		};
+		// 使用刚指定的配置项和数据显示图表。
+		myChart.setOption(option);
+    }
+		
+		var bytimeincome;
+       	var bytimeoutcome;
+       	//按时间合计
+		function inbytime(){
+			// 发送ajax请求
+			var starttime =document.getElementById("starttime").value;
+			var endtime =document.getElementById("endtime").value;
+			$.ajax({
+				url : "http://localhost:8080/myffms/income/incomesumbytime.do",
+				type : "post",
+				contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+				data : {"starttime":starttime,
+						"endtime":endtime},
+				dataType : "json",
+				success : function(result) {
+					if (result.status == 0) {
+						var bytimeincome = result.data;
+						//alert(s);
+						$("#totalbytimeincome").val(bytimeincome);
+						return;
+					}
+				},
+				error : function() {
+					alert("合计错误");
+				}
+			});
+			return false;// 阻止冒泡
+		};
+		
+				//按时间合计
+		function outbytime(){
+			// 发送ajax请求
+			var starttime =document.getElementById("starttime").value;
+			var endtime =document.getElementById("endtime").value;
+			$.ajax({
+				url : "http://localhost:8080/myffms/outcome/outcomesumbytime.do",
+				type : "post",
+				contentType:"application/x-www-form-urlencoded; charset=UTF-8",
+				data : {"starttime":starttime,
+						"endtime":endtime},
+				dataType : "json",
+				success : function(result) {
+					if (result.status == 0) {
+						var bytimeoutcome = result.data;
+						//alert(s);
+						$("#totalbytimeoutcome").val(bytimeoutcome);
+						return;
+					}
+				},
+				error : function() {
+					alert("合计错误");
+				}
+			});
+			return false;// 阻止冒泡
+		};
+		
+		function bytime(){
+			inbytime();
+			outbytime();
+			var a = document.getElementById("totalbytimeincome").value;
+			var b = document.getElementById("totalbytimeoutcome").value;
+			$("#totaltime").val(a-b);
+		}
+</script>
+</body>
+</html>

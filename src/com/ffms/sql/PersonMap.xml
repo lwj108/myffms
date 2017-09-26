@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.ffms.dao.PersonDao">
+	<select id="findByPid" 
+	parameterType="int"
+	resultType="com.ffms.entity.Person">
+	select * from person
+		where pid=#{pid}
+	</select>
+	
+	<select id="findAll"
+	resultType="com.ffms.entity.Person"
+	>
+	select * from person
+	
+	</select>
+	
+	
+	<delete id="delete"
+	parameterType="int">
+	delete from person
+	where pid=#{pid}
+	</delete>
+	
+	<update id="update"
+	parameterType="com.ffms.entity.Person">
+	update person
+	set name=#{name},sex=#{sex},age=#{age},identity=#{identity},birthday=#{birthday},telephone=#{telephone},state=#{state}
+	where pid=#{pid}
+	</update>
+	
+	<insert id="add" 
+	parameterType="com.ffms.entity.Person">
+	insert into person 
+	  (name,sex,age,identity,birthday,telephone,state)
+	values 
+	  (#{name},#{sex},#{age},#{identity},#{birthday},#{telephone},#{state})
+	</insert>
+	
+	
+</mapper>

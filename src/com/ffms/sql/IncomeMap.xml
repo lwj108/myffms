@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.ffms.dao.IncomeDao">
+	<select id="findAll"
+	resultType="com.ffms.entity.Income"
+	>
+	select * from income
+	</select>
+	
+	<delete id="delete"
+	parameterType="int">
+	delete from income
+	where iid=#{iid}
+	</delete>
+	
+	<update id="update"
+	parameterType="com.ffms.entity.Income">
+	update income
+	set name=#{name},itype=#{itype},iname=#{iname},money=#{money},iway=#{iway},time=#{time}
+	where iid=#{iid}
+	</update>
+	
+	<insert id="add" 
+	parameterType="com.ffms.entity.Income">
+	insert into income 
+	  (name,itype,iname,money,iway,time)
+	values 
+	  (#{name},#{itype},#{iname},#{money},#{iway},#{time})
+	</insert>
+	
+	<select id="find"
+	resultType="com.ffms.entity.Income">
+	select iname,money from income
+	</select>
+	
+	<select id="sum"
+	resultType="java.lang.Integer">
+	select sum(money) from income 	
+	</select>
+	
+	<select id="findbyname"
+	resultType="com.ffms.entity.Income">
+	select iid,name,itype,iname,money,iway,time from income
+	where name=#{name} 
+	</select>
+	
+	<select id="sumbyname"
+	parameterType="com.ffms.entity.Income"
+	resultType="java.lang.Integer">
+	select sum(money)from income
+	where name=#{name} 
+	</select>
+	
+	<select id="findbytime"
+	resultType="com.ffms.entity.Income">
+	select iid,name,itype,iname,money,iway,time from income
+	where time&gt;=#{starttime} and time&lt;=#{endtime}
+	</select>
+	
+	<select id="sumbytime"
+	parameterType="com.ffms.entity.Income"
+	resultType="java.lang.Integer">
+	select sum(money)from income
+	where time&gt;=#{starttime} and time&lt;=#{endtime}
+	</select>
+	
+	<select id="findbytype"
+	resultType="com.ffms.entity.Income">
+	select iid,name,itype,iname,money,iway,time from income
+	where itype=#{itype}
+	</select>
+	
+	<select id="sumbytype"
+	parameterType="com.ffms.entity.Income"
+	resultType="java.lang.Integer">
+	select sum(money)from income
+	where itype=#{itype}
+	</select>
+	
+	
+</mapper>

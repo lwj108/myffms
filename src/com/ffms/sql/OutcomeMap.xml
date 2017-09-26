@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+ "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+<mapper namespace="com.ffms.dao.OutcomeDao">
+	<select id="findAll"
+	resultType="com.ffms.entity.Outcome"
+	>
+	select * from outcome
+	</select>
+	
+	<delete id="delete"
+	parameterType="int">
+	delete from outcome
+	where oid=#{oid}
+	</delete>
+	
+	<update id="update"
+	parameterType="com.ffms.entity.Outcome">
+	update outcome
+	set name=#{name},otype=#{otype},oname=#{oname},money=#{money},oway=#{oway},time=#{time}
+	where oid=#{oid}
+	</update>
+	
+	<insert id="add" 
+	parameterType="com.ffms.entity.Outcome">
+	insert into outcome 
+	  (name,otype,oname,money,oway,time)
+	values 
+	  (#{name},#{otype},#{oname},#{money},#{oway},#{time})
+	</insert>
+	
+	<select id="sum"
+	resultType="java.lang.Integer">
+	select sum(money) from outcome 	
+	</select>
+	
+	<select id="findbyname"
+	resultType="com.ffms.entity.Outcome">
+	select oid,name,otype,oname,money,oway,time from outcome
+	where name=#{name} 
+	</select>
+	
+	<select id="sumbyname"
+	parameterType="com.ffms.entity.Outcome"
+	resultType="java.lang.Integer">
+	select sum(money)from outcome
+	where name=#{name} 
+	</select>
+	
+	<select id="findbytime"
+	resultType="com.ffms.entity.Outcome">
+	select oid,name,otype,oname,money,oway,time from outcome
+	where time&gt;=#{starttime} and time&lt;=#{endtime}
+	</select>
+	
+	<select id="sumbytime"
+	parameterType="com.ffms.entity.Outcome"
+	resultType="java.lang.Integer">
+	select sum(money)from outcome
+	where time&gt;=#{starttime} and time&lt;=#{endtime}
+	</select>
+	
+	<select id="findbytype"
+	resultType="com.ffms.entity.Outcome">
+	select oid,name,otype,oname,money,oway,time from outcome
+	where otype=#{otype}
+	</select>
+	
+	<select id="sumbytype"
+	parameterType="com.ffms.entity.Outcome"
+	resultType="java.lang.Integer">
+	select sum(money)from outcome
+	where otype=#{otype}
+	</select>
+</mapper>
